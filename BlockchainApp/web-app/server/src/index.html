@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<!--
+	Theory by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+
+<head>
+	<title>Theory by TEMPLATED</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="/assets/css/main.css" />
+	<script type="text/javascript" language="javascript">
+		function redirect(){
+			location.href = 'http://192.168.0.106:10023/config';
+		}
+		function resizeIframe(obj) {
+			console.log(obj);
+    		obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  		}
+	</script>
+	
+</head>
+
+<body>
+
+	<!-- Header -->
+	<header id="header">
+		<div class="inner">
+			<a href="index.html" class="logo">Theory</a>
+			<nav id="nav">
+				<a href="http://192.168.0.106:3000/">Home</a>
+			</nav>
+			<a href="#navPanel" class="navPanelToggle"><span class="fa fa-bars"></span></a>
+		</div>
+	</header>
+
+	<!-- Banner -->
+	<section id="banner">
+		<h1>설정</h1>
+		<p>시료 창고 제어.</p>
+	</section>
+
+	<!-- One -->
+	<section id="one" class="wrapper">
+		<div class="inner">
+			<form action="http://192.168.0.106:10023/transferConf" method="post">
+				<div class="flex flex-3">
+					<article>
+						<header>
+							<h3>적정 온도 설정</h3>
+						</header>
+						<input name="temperature" type='number' min='-100' max='100' step='1'> ℃
+						<br><br>
+						<input id="conf" class="button special" type='submit' value="설정">
+					</article>
+
+					<article>
+						<header>
+							<h3>적정 습도 설정</h3>
+						</header>
+						<input name="humidity" type='number' min='0' max='100' step='1'> %
+						<br><br>
+						<input id="conf" class="button special" type='submit' value="설정">
+						<footer>
+						</footer>
+					</article>
+					<article>
+						<header>
+							<h3>적정 가스 설정</h3>
+						</header>
+						<input name="gas" type='number' min='-100' max='100' step='1'> ppm
+						<br><br>
+						<input id="conf" class="button special" type='submit' value="설정">
+					</article>
+				</div>
+			</form>
+		</div>
+	</section>
+
+	<section id="two" class="wrapper">
+		<div class="inner">
+			<div class="flex flex-5">
+				<!-- <article> -->
+					<form id="detect" action="/conan" method='post' enctype="application/json" target="ifr">
+						<div id="date">
+							<input type='number' name="year" placeholder="년도">
+							<select name="month">
+								<option>월</option>
+								<option value="01">1</option>
+								<option value="02">2</option>
+								<option value="03">3</option>
+								<option value="04">4</option>
+								<option value="05">5</option>
+								<option value="06">6</option>
+								<option value="07">7</option>
+								<option value="08">8</option>
+								<option value="09">9</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+							<input type='number' placeholder="일" name="day" min = 1 max = 31 minlength="1">
+						</div>
+						<input type="time" name="time">
+						<input type="submit" class="button special" value="Submit">
+					</form>
+				<!-- </article> -->
+			</div>
+		</div>
+	</section>
+		
+		<iframe id="hidden" name="ifr"></iframe>
+	<!-- Footer -->
+	<footer id="footer">
+		<div class="inner">
+			<div class="flex">
+				<div class="copyright">
+					&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a
+						href="https://unsplash.com">Unsplash</a>.
+				</div>
+				<ul class="icons">
+					<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+					<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+					<li><a href="#" class="icon fa-linkedin"><span class="label">linkedIn</span></a></li>
+					<li><a href="#" class="icon fa-pinterest-p"><span class="label">Pinterest</span></a></li>
+					<li><a href="#" class="icon fa-vimeo"><span class="label">Vimeo</span></a></li>
+				</ul>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/skel.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+	<!-- <script src="ifr.js"></script> -->
+</body>
+
+</html>

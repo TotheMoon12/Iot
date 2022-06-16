@@ -1,0 +1,77 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+'use strict';
+const { Contract } = require('fabric-contract-api');
+
+class Energy extends Contract {
+    
+    async initLedger(ctx) {
+        console.info('============= START : Initialize Ledger ===========');
+        console.info('============= END : Initialize Ledger ===========');
+    }
+
+    async insert(ctx, key, data) {
+        console.info('============= START : Insert ===========');
+        let keylist = JSON.parse(key);
+        let datalist = JSON.parse(data);
+        for(let i = 0; i < keylist.length; ++i){
+            await ctx.stub.putState(keylist[i], Buffer.from(JSON.stringify(datalist[i])));
+        }
+        console.info('============= END : Insert ===========');
+    }
+
+    async insert_batch(ctx, data) {
+        console.info('============= START : Insert_batch Data ===========');
+        let datalist = JSON.parse(data);
+        for(let i = 0; i < datalist.length; ++i){
+            await ctx.stub.putState(datalist[i].key, Buffer.from(JSON.stringify(datalist[i].data)));
+        }
+        console.info('============= END : Insert_batch Data ===========');
+    }
+
+    async search(ctx, key){
+        console.info('============= START : Search ===========');
+        let keylist = JSON.parse(key);
+        const allResult = {};
+        for(let i = 0; i < keylist.length; ++i){
+            const key = keylist[i]
+            let data;
+            const dataAsBytes = await ctx.stub.getState(key);
+            if (!dataAsBytes || dataAsBytes.length === 0) {
+                data = "Key don't exist";
+            }
+            else{
+                data = JSON.parse(dataAsBytes.toString('utf8'));
+            }
+            allResult[key] = data;
+        }
+        console.info('============= END : Search ===========');
+        return JSON.stringify(allResult);
+    }
+
+    async insertCER(ctx, key, data) {
+        console.info('============= START : Insert CER ===========');
+        await ctx.stub.putState(key, Buffer.from(data));
+        console.info('============= END : Insert CER ===========');
+    }
+
+    async verifyCER(ctx, key){
+        console.info('============= START : Verify CER===========');
+        let data;
+        const dataAsBytes = await ctx.stub.getState(key);
+        if (!dataAsBytes || dataAsBytes.length === 0) {
+            data = "FAIL : Key don't exist";
+            console.info('============= END : Verify CER===========');
+            return data;
+        }
+        else{
+            data = JSON.parse(dataAsBytes.toString('utf8'));
+        }
+        console.info('============= END : Verify CER===========');
+        return JSON.stringify(data);
+    }
+}
+
+module.exports = Energy;

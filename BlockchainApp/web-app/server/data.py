@@ -1,0 +1,21 @@
+import json
+import io
+from collections import OrderedDict
+
+file_data = OrderedDict()
+file_data['datalist'] = []
+for index in range(0,8000):
+    data = {}
+    data['key'] = str(index)
+    data['data'] = {"data_one" : "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "data_two" : "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "data_three" : "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "data_four" : "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "data_five" : "000000"}
+
+    file_data['datalist'].append(data)
+    
+# fp =io.open('data.json','w', encoding='utf-8')
+with open('data.json','w') as make_file:
+    json.dump(file_data, make_file)
+

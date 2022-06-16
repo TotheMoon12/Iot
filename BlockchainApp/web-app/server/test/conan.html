@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image</title>
+</head>
+<body>
+    <div>
+        <ul id='image_list'>
+        </ul>
+    </div>
+    <script>
+        /*socket
+        result*/
+        let result = ['./uploads/202012120210Alexstrasza.jpg', './uploads/2020121202222Ysera.jpg', './uploads/202012120226Unknown.jpg'];
+        let parrent = document.getElementById('image_list');
+        for(let i = 0; i < result.length; ++i){
+            let image = document.createElement('img');
+            let span = document.createElement('span');
+            let button =document.createElement('button');
+            let child = document.createElement('li');
+            let text = result[i];
+            text = text.replace('./uploads/', '');
+            text = text.replace('.jpg', '');
+            console.log(text);
+            image.src = result[i];
+            span.innerText = text;
+            image.style.display = 'none';
+            button.appendChild(span);
+            button.onclick = function(){
+                if(image.style.display == 'none') image.style.display = 'block';
+                else image.style.display = 'none';
+            }
+            child.appendChild(button);
+            child.appendChild(image);
+            parrent.appendChild(child);
+        }  
+      </script>
+</body>
+</html>

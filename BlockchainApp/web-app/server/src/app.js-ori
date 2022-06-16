@@ -1,0 +1,153 @@
+//npm module
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const path = require('path');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const fs = require('fs');
+const read = require('read');
+const http = require('http');
+const crypto = require('crypto');
+const multer =require('multer');
+
+const { PythonShell } = require("python-shell");
+
+//CER storage config
+// const upload = multer({ dest: 'uploads/'
+// });
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    }
+  }),
+});
+
+
+const app = express();
+
+app.use(express.static(__dirname));
+app.use(morgan('combined'));
+app.use(bodyParser.json({
+  limit: "128mb"
+}));
+app.use(bodyParser.urlencoded({
+  limit: "128mb"
+}));
+app.use(cookieParser());
+app.use(cors());
+var server = http.createServer(app);
+server.listen(10023,'192.168.0.106');
+
+const network = require('./fabric/network.js');
+
+// promethus data array
+var proTemperature = [];
+var proHumidity = [];
+var proGas = [];
+
+app.get('/config', function(req,res){
+  res.sendFile(__dirname + "/index.html");
+});
+
+app.post('/saveData', function(req, res){
+
+  var key = 'saveData_'+req.body.time;
+  var data = {
+    temperature : req.body.temperature,
+    humidity : req.body.humidity,
+    gas : req.body.gas
+  };
+  console.log(key);
+  console.log(data);
+
+  console.log('start');
+  network.saveData(key, JSON.stringify(data)).then(()=>{
+    proTemperature.push(data.temperature);
+    proHumidity.push(data.humidity);
+    proGas.push(data.gas);
+    res.send("Perfect");
+  })
+  console.log('end');
+});
+
+app.post('/detectPerson',  upload.single('file'),function(req, res){
+  console.log('hello');
+  let sharsum = crypto.createHash('sha1');
+  sharsum.update(req.file.toString());
+  let fileHash = sharsum.digest('hex');
+  let user_id = req.body.user_id;
+  let time = req.body.datetime;
+  let key = 'detect_' + time;
+
+  network.detectPerson(key, fileHash.toString());
+  res.send('good');
+});
+
+app.post('/transferConf', function(req, res) {
+  console.log(req.body);
+  let options = {
+    scriptPath: "/opt/aibc/iot/web-app/server",
+    args: [0,req.body.temperature, req.body.humidity, req.body.gas]
+  };
+  PythonShell.run("iot.py", options, function(err, data){
+    if(err) throw err;
+    console.log(data);
+  });
+  res.sendFile(__dirname + "/index.html");
+});
+app.post('/door', function(req, res) {
+  console.log('door');
+  let options = {
+    scriptPath: "/opt/aibc/iot/web-app/server",
+    args: [1]
+  };
+  PythonShell.run("iot.py", options, function(err, data){
+    if(err) throw err;
+    console.log(data);
+  });
+  res.sendFile(__dirname + "/index.html");
+});
+
+app.post('/fan', function(req, res) {
+  console.log('fan');
+  let options = {
+    scriptPath: "/opt/aibc/iot/web-app/server",
+    args: [2]
+  };
+  PythonShell.run("iot.py", options, function(err, data){
+    if(err) throw err;
+    console.log(data);
+  });
+  res.sendFile(__dirname + "/index.html");
+});
+
+//createCER api
+app.post('/file', upload.single('file'), function(req, res) {   
+  console.log(req.file);
+
+  console.log(req.body.id);
+  console.log(req.body.date);
+
+  res.send("good");
+});
+
+process.title = 'app';
+
+//send blockchain process information to prometheus
+app.get('/prometheus', async (req, res) => {
+  if(proTemperature.length > 0)
+  {
+    res.send('Temperature_Sensor_Status ' + proTemperature[0][0] + '\nTemperature ' + proTemperature[0][1] +
+      '\nHumidity_Sensor_Status ' + proHumidity[0][0] + '\nHumidity ' + proHumidity[0][1] +
+      '\nGas_Sensor_Status ' + proGas[0][0] + '\nGas ' + proGas[0][1]);
+    
+    proTemperature.shift();
+    proHumidity.shift();
+    proGas.shift();
+  }
+})

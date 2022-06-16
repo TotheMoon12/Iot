@@ -1,0 +1,16 @@
+{
+	"admin" : {
+		"insertCER" : 1,
+		"verifyCER" : 1,
+		"insert" : 1,
+		"search" : 1,
+		"terminate" : 1	  
+	},
+	"user" : {
+		"insertCER" : 1,
+		"verifyCER" : 1,
+		"insert" : 1,
+		"search" : 1,
+		"terminate" : 0	  
+	}
+}
